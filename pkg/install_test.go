@@ -33,8 +33,7 @@ func TestInstall(t *testing.T) {
 			)
 			file, err = newLockfile(tc.fullpath)
 			assert.Nil(t, err)
-			// @todo convert the third to options
-			err = InstallFile(file, false, true)
+			err = Install(file, false, true)
 			assert.Nil(t, err, fmt.Sprintf("Check %s for possible undeleted .compote_ directories.", file.Fullpath()))
 			err = filepath.Walk(file.Dirpath(), func(path string, info os.FileInfo, err error) error {
 				if info.IsDir() {

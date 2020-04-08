@@ -58,38 +58,14 @@ func TestLoadFile(t *testing.T) {
 			path:     "../testdata",
 			passes:   true,
 		},
-		"testdata directory path with force and jsonfile and no lockfile": {
-			filename: "composer.json",
-			path:     "../testdata/files",
-			passes:   true,
-			forced:   true,
-		},
 		"testdata lockfile path": {
 			filename: "composer.lock",
 			path:     "../testdata/composer.lock",
 			passes:   true,
 		},
-		"testdata forced lockfile path": {
-			filename: "composer.lock",
-			path:     "../testdata/composer.lock",
-			passes:   true,
-			forced:   true,
-		},
-		"testdata jsonfile path": {
-			filename: "composer.json",
-			path:     "../testdata/composer.json",
-			passes:   true,
-			forced:   true,
-		},
 		"testdata unforced jsonfile path": {
 			path:   "../testdata/composer.json",
 			passes: false,
-		},
-		"testdata unique path": {
-			filename: "composer.unique",
-			path:     "../testdata/composer.unique",
-			passes:   true,
-			forced:   true,
 		},
 		"testdata unforced unique path": {
 			path:   "../testdata/composer.unique",
@@ -118,7 +94,7 @@ func TestLoadFile(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			file, err := LoadFile(tc.path, tc.forced)
+			file, err := LoadFile(tc.path)
 			if tc.passes {
 				assert.NotNil(t, file)
 				assert.Nil(t, err)

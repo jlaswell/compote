@@ -7,14 +7,14 @@ PREFIX?=$(shell pwd)
 all: help
 
 .PHONY: build
-build: ## Build compote
+build: ## Build compote.
 	@echo "+ $@"
-	@go build -o compote main.go
+	@go build -o compote -ldflags="-s -w" main.go
 
 .PHONY: container
-container: ## Build a compote container
+container: ## Build the compote container.
 	@echo "+ $@"
-	@docker build -t jlaswell/compote .
+	@./build.sh
 
 .PHONY: fmt
 fmt: ## Verifies all files have been `gofmt`ed.
@@ -29,7 +29,7 @@ lint: ## Verifies `golint` passes.
 .PHONY: test
 test: ## Run the default tests for this project.
 	@echo "+ $@"
-	@go test ${GO_EXTRAS} $(shell go list ./... | grep -v vendor)
+	@go test ${GO_EXTRAS} -v $(shell go list ./... | grep -v vendor)
 
 .PHONY: test-c
 test-c: ## Run the default tests for this project and show coverage.

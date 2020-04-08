@@ -18,16 +18,15 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// @todo rename to Install
-// @todo convert the third to options
-func InstallFile(file DependencyFile, skipDev bool, quiet bool) error {
+// @todo convert the third param to options
+func Install(file DependencyFile, skipDev bool, quiet bool) error {
 	var packages = make(map[string]Package)
 	pkgs := file.Dependencies(!skipDev)
 	for _, p := range pkgs {
 		packages[p.Name] = p
 	}
-	buffer := new(sync.WaitGroup)
-	buffer.Add(len(packages))
+	wg := new(sync.WaitGroup)
+	wg.Add(len(packages))
 	if !quiet {
 		fmt.Printf("Installing %d direct dependencies\n", len(packages))
 	}
@@ -38,10 +37,9 @@ func InstallFile(file DependencyFile, skipDev bool, quiet bool) error {
 		return err
 	}
 	for _, p := range packages {
-		// @todo rename this to installPackage
-		go installPackageRename(buffer, dir, p)
+		go installPackage(wg, dir, p, quiet)
 	}
-	buffer.Wait()
+	wg.Wait()
 
 	vendorDir := filepath.Join(file.Dirpath(), "vendor")
 	os.RemoveAll(vendorDir)
@@ -70,18 +68,18 @@ func InstallFile(file DependencyFile, skipDev bool, quiet bool) error {
 	if err != nil {
 		return err
 	}
-	installedFileJson, err := json.MarshalIndent(pkgs, "", "    ")
+	installedFileJSON, err := json.MarshalIndent(pkgs, "", "    ")
 	if err != nil {
 		return err
 	}
-	fmt.Fprintf(installedFile, string(installedFileJson)+"\n")
+	fmt.Fprintf(installedFile, string(installedFileJSON)+"\n")
 
 	return nil
 }
 
 // @todo need a way to handle errors here
-func installPackageRename(buffer *sync.WaitGroup, dir string, p Package) error {
-	defer buffer.Done()
+func installPackage(wg *sync.WaitGroup, dir string, p Package, quiet bool) error {
+	defer wg.Done()
 
 	archive := filepath.Join(dir, uuid.NewV4().String()+".zip")
 	out, err := os.Create(archive)
@@ -104,8 +102,8 @@ func installPackageRename(buffer *sync.WaitGroup, dir string, p Package) error {
 	// @todo Would be nice to only have to walk the first file to get the dir name.
 	err = archiver.Walk(archive, func(f archiver.File) error {
 		zfh, ok := f.Header.(zip.FileHeader)
-		if ok {
-			// fmt.Println("Filename:", zfh.Name)
+		if !ok {
+			return fmt.Errorf("error walking %s", zfh.Name)
 		}
 		if !firstSet {
 			first = zfh.Name
@@ -135,7 +133,9 @@ func installPackageRename(buffer *sync.WaitGroup, dir string, p Package) error {
 		return err
 	}
 
-	// fmt.Print(".")
+	if !quiet {
+		fmt.Print(".")
+	}
 
 	return nil
 }

@@ -5,7 +5,6 @@
 *.so
 *.dylib
 compote
-compoteComposer
 
 # Test binary, built with `go test -c`
 *.test
@@ -15,5 +14,9 @@ compoteComposer
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+
+# os x
+.DS_Store
+
 # We'll need to come up with a better convention of how to ignore testdata
 testdata/

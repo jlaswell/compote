@@ -1,0 +1,12 @@
+.git
+.github
+**/.idea
+
+build.sh
+*.out
+compote
+
+Dockerfile
+assets
+testdata
+vendor

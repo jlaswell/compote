@@ -22,6 +22,7 @@ type DependencyFile interface {
 var _ DependencyFile = (*lockfile)(nil)
 
 type lockfile struct {
+	Readme      []string  `json:"_readme,omitempty"`
 	Packages    []Package `json:"packages"`
 	PackagesDev []Package `json:"packages-dev"`
 	filename    string
@@ -59,7 +60,7 @@ func newLockfile(path string, options ...newLockfileOptions) (*lockfile, error) 
 		return nil, err
 	}
 
-	// @todo this only works on osx/linux?
+	// @todo Does this only works on osx/linux?
 	filename := fullpath[strings.LastIndex(fullpath, "/")+1:]
 
 	lf := &lockfile{
@@ -94,8 +95,8 @@ func newLockfile(path string, options ...newLockfileOptions) (*lockfile, error) 
 	return lf, nil
 }
 
-// LoadFile will generate a Dependency file from a given path.
-func LoadFile(path string, force bool) (DependencyFile, error) {
+// LoadFile will generate a DependencyFile from a given path.
+func LoadFile(path string) (DependencyFile, error) {
 	fullpath, err := filepath.Abs(path)
 	if err != nil {
 		return nil, err
@@ -106,24 +107,12 @@ func LoadFile(path string, force bool) (DependencyFile, error) {
 		return nil, err
 	}
 
-	// @todo This grouping of conditionals will need to be reworked for readability
-	// and maintainability. Just working to make this simple and testable at the moment.
-	if !info.IsDir() {
-		if force {
-			file, err := newLockfile(fullpath)
-			if err != nil {
-				return nil, err
-			}
-			return file, nil
-		} else if strings.HasSuffix(fullpath, "composer.lock") {
-			file, err := newLockfile(fullpath)
-			if err != nil {
-				return nil, err
-			}
-			return file, nil
+	if !info.IsDir() && strings.HasSuffix(fullpath, "composer.lock") {
+		file, err := newLockfile(fullpath)
+		if err != nil {
+			return nil, err
 		}
-
-		return nil, errors.Errorf("No valid composer.lock file found at %s", fullpath)
+		return file, nil
 	}
 
 	// Find a dependency file from the current directory path.
@@ -135,18 +124,8 @@ func LoadFile(path string, force bool) (DependencyFile, error) {
 		}
 		return file, nil
 	}
-	if force {
-		exists, err = pathExists(filepath.Join(fullpath, "composer.json"))
-		if exists && err == nil {
-			file, err := newLockfile(filepath.Join(fullpath, "composer.json"))
-			if err != nil {
-				return nil, err
-			}
-			return file, nil
-		}
-	}
 
-	return nil, errors.Errorf("No valid composer.lock or composer.json file found at %s", fullpath)
+	return nil, errors.Errorf("No valid composer.lockfile found at %s", fullpath)
 }
 
 func pathExists(fullpath string) (bool, error) {

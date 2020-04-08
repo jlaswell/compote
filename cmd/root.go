@@ -26,15 +26,17 @@ import (
 )
 
 var cfgFile string
+var rootCmdShort = "bite-sized dependency management for PHP"
+var rootCmdLong = rootCmdShort + `
+
+Find out if you should consider switching to compote at
+https://github.com/jlaswell/compote.`
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "compote",
-	Short: "A composer alternate dependency management solution for PHP",
-	Long: `A composer alternate dependency management solution for PHP
-
-Find out if you should consider switching to compote at
-https://github.com/jlaswell/compote.`,
+	Short: rootCmdShort,
+	Long:  rootCmdLong,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -51,11 +53,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Config file (default is $HOME/.compote.yaml)")
 	rootCmd.PersistentFlags().StringP("filepath", "f", ".", "Path to the directory or composer file to work from")
-	// @todo
-	// rootCmd.PersistentFlags().StringP("output", "o", "table", "Output format: table|json|wide")
 	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "Do not write any output")
 	viper.BindPFlag("filepath", rootCmd.PersistentFlags().Lookup("filepath"))
-	// viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
 	viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
 }
 

@@ -32,20 +32,9 @@ By default, install requires a composer.lock file to be present
 in order to install packages. This prevents the mistake of
 updating packages when no lockfile is present.
 
-To force the installation of packages when missing a lockfile,
-the --force option is available.
-
 Examples:
   # Install package locked to this project.
   compote install`
-
-// @todo
-//  # Install packages locked to this project, but fallback to the
-// # composer.json if composer.lock is missing.
-// compote install --force
-//
-// # Install package from a unique dependency filename.
-// compote install -f compote.json --force`
 
 // installCmd represents the install command
 var installCmd = &cobra.Command{
@@ -58,32 +47,21 @@ var installCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(installCmd)
 
-	installCmd.Flags().BoolP("no-autoloader", "", false, "Skip autoloading after install")
-	// @todo add force when autoloading is more stable
-	// installCmd.Flags().BoolP("force", "", false, "Fallback to use composer.json when missing .lock file")
 	installCmd.Flags().BoolP("no-dev", "", false, "Skip installation of development packages")
-	viper.BindPFlag("no-autoloader", installCmd.Flags().Lookup("no-autoloader"))
-	// viper.BindPFlag("force", installCmd.Flags().Lookup("force"))
 	viper.BindPFlag("no-dev", installCmd.Flags().Lookup("no-dev"))
 }
 
 func runInstallCmd(cmd *cobra.Command, args []string) {
 	filepath := viper.GetString("filepath")
-	force := viper.GetBool("force")
 
-	file, err := pkg.LoadFile(filepath, force)
+	file, err := pkg.LoadFile(filepath)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	err = pkg.InstallFile(file, viper.GetBool("no-dev"), viper.GetBool("quiet"))
+	err = pkg.Install(file, viper.GetBool("no-dev"), viper.GetBool("quiet"))
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// @todo defer to 'composer dump-auto' until we have implemented autoloading
-	// if !viper.GetBool("no-autoloader") {
-	// pkg.Autoload()
-	// }
 }

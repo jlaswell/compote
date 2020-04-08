@@ -36,18 +36,12 @@ Examples:
   # List basic information for all installed packages.
   compote show
 
-  # List more detailed information for all installed packages.
-  compote show -o wide
-
-  # List information for specific packages in json format.
-  compote show illuminate/container illuminate/support -o json
-
-  # List information for a specific project locally.
+# List information for a specific project locally.
   compote show -f ~/code/jlaswell/my-project`
 
 // showCmd represents the show command
 var showCmd = &cobra.Command{
-	Use:   "show [<package>]",
+	Use:   "show",
 	Short: showCmdShort,
 	Long:  showCmdLong,
 	Run:   runShowCmd,
@@ -58,24 +52,21 @@ func init() {
 }
 
 func runShowCmd(cmd *cobra.Command, args []string) {
-	lockfilePath := viper.GetString("filepath")
-	lockfile, err := pkg.LoadLockfile(lockfilePath)
+	filepath := viper.GetString("filepath")
+	file, err := pkg.LoadFile(filepath)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
-	// @todo we'll want to switch the responsibility of output to a different mechanism
 	t := table.NewWriter()
 	t.Style().Options = table.OptionsNoBordersAndSeparators
 	t.Style().Box.PaddingLeft = ""
-	t.Style().Box.PaddingRight = ""
+	t.Style().Box.PaddingRight = "  "
 	t.SetOutputMirror(os.Stdout)
-	// t.AppendHeader(table.Row{"NAME", "VERSION", "DESCRIPTION"})
-	t.AppendHeader(table.Row{"NAME"})
-	for _, p := range lockfile.Contents.Packages {
-		// t.AppendRow(table.Row{p.Name, p.Version, p.Description})
-		t.AppendRow(table.Row{p.Name})
+	t.AppendHeader(table.Row{"NAME", "VERSION", "DESCRIPTION"})
+	for _, p := range file.Dependencies(true) {
+		t.AppendRow(table.Row{p.Name, p.Version, p.Description})
 	}
 	t.Render()
 }
