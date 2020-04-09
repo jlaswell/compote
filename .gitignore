@@ -20,3 +20,4 @@ vendor/
 
 # We'll need to come up with a better convention of how to ignore testdata
 testdata/**/vendor
+testdata/**/.compote_*

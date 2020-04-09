@@ -1,0 +1,6 @@
+{
+    "require": {
+        "composer/semver": "^1.5"
+    },
+    "autoload": {}
+}
