@@ -11,7 +11,9 @@ docker run -it $(pwd):/app jlaswell/compote install
 
 ## About
 First things first; compote is not designed as a replacement for [composer](https://github.com/composer/composer)
-but as a compliment for specific use-cases. If you don't have one of the following use-cases, then composer will continue to serve you well. This project is still very much a work-in-progress, but it works well enough for my use-cases at this point. Expect things to change a lot moving towards v1.
+but as a compliment for specific use-cases. (While you're here, why not consider heading over there and supporting?)
+
+If you don't have one of the following use-cases, then composer will continue to serve you well. This project is still very much a work-in-progress, but it works well enough for my use-cases at this point. Expect things to change a lot moving towards v1.
 
 You might consider compote in favor of composer when trying to speed-up CI pipelines and automated workflows or when working within a memory constrained environment.
 
@@ -26,7 +28,7 @@ Here's a snippet to run compote locally via a container until there is a better 
 $ alias dcompote='docker run -it $(pwd):/app jlaswell/compote'
 $ dcompote install
 ```
-Your `composer.lock` file is expected to be present within the `/app` directory of the container.
+Your `composer.lock` file is expected to be present within the current directory when running `dcompote`.
 
 ### Within CI
 
