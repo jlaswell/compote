@@ -13,7 +13,7 @@ docker run -it $(pwd):/app jlaswell/compote install
 First things first; compote is not designed as a replacement for [composer](https://github.com/composer/composer)
 but as a compliment for specific use-cases. (While you're here, why not consider heading over there and supporting?)
 
-comopte is designed as a subset implementation of composer commands. Currently, it can install locked dependencies and show locked dependencies for a project.
+compote is designed as a subset implementation of composer commands. Currently, it can install locked dependencies and show locked dependencies for a project.
 
 If you don't have one of the following use-cases, then composer will continue to serve you well. This project is still very much a work-in-progress, but it works well enough for my use-cases at this point. Expect things to change a lot moving towards v1.
 
