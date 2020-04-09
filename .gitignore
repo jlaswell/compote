@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+compote
 
 # Test binary, built with `go test -c`
 *.test
@@ -12,4 +13,10 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
+# os x
+.DS_Store
+
+# We'll need to come up with a better convention of how to ignore testdata
+testdata/**/vendor
