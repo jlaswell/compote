@@ -6,7 +6,7 @@ bite-sized dependency management for PHP
 ## 🚀 Try it now
 
 ```sh
-docker run -it $(pwd):/app jlaswell/compote install
+docker run -it -v "$(pwd):/app" jlaswell/compote install
 ```
 
 ## About
@@ -27,7 +27,7 @@ For now, you should stick with composer when adding or removing packages, updati
 
 Here's a snippet to run compote locally via a container until there is a better process for binaries.
 ```sh
-$ alias dcompote='docker run -it $(pwd):/app jlaswell/compote'
+$ alias dcompote='docker run -it -v "$(pwd):/app" jlaswell/compote'
 $ dcompote install
 ```
 Your `composer.lock` file is expected to be present within the current directory when running `dcompote`.
@@ -37,7 +37,7 @@ Your `composer.lock` file is expected to be present within the current directory
 When using an automated workflow, I suggest mounting your project to `/app` in the `jlaswell/compote` container and running `install`. Remember, compote doesn't handle autoloading yet! so you will still need to rely on composer. Here's an example workflow:
 
 ```sh
-docker run -it $(pwd):/app jlaswell/compote install
+docker run -it -v "$(pwd):/app" jlaswell/compote install
 composer dump-auto
 ```
 
