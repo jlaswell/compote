@@ -125,7 +125,7 @@ func LoadFile(path string) (DependencyFile, error) {
 		return file, nil
 	}
 
-	return nil, errors.Errorf("No valid composer.lockfile found at %s", fullpath)
+	return nil, errors.Errorf("No valid composer.lock file found at %s", fullpath)
 }
 
 func pathExists(fullpath string) (bool, error) {
